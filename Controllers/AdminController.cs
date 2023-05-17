@@ -94,6 +94,10 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> TurEkle(TurlerVm gelenData)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(gelenData);
+        }
         Turler yeniTur = new Turler
         {
             TurAdi = gelenData.TurAdi,
