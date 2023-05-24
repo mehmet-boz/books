@@ -30,7 +30,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="/Admin/TurEkle" class="btn btn-primary"><i class="fa fa-plus mr-2"></i>Ekle</a>
+                        <a href="/Admin/TurForm" class="btn btn-primary"><i class="fa fa-plus mr-2"></i>Ekle</a>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -52,13 +52,13 @@
                                             @tur.Sira
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-xs btn-primary"> <i class="far fa-edit"></i></a>
-                                            <a href="#" class="btn btn-xs btn-danger"> <i class="fa fa-trash"></i></a>
+                                            <a href="/Admin/TurForm/@tur.Id" class="btn btn-xs btn-primary"> <i
+                                                    class="far fa-edit"></i></a>
+                                            <a href="#" onclick="ConfirmDelete(id=@tur.Id);" class="btn btn-xs btn-danger">
+                                                <i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 }
-
-
                             </tbody>
                         </table>
                     </div>
@@ -71,3 +71,21 @@
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </div>
+
+<script type="text/javascript">
+    function ConfirmDelete(id) {
+        Swal.fire({
+            title: 'Confirm delete!',
+            text: 'Bu kaydı silmek istediğinizden emin misiniz?',
+            icon: 'error',
+            confirmButtonText: 'Sil',
+            showCancelButton: true
+        }).then((value) => {
+            if (value.isConfirmed) {
+                window.location.replace("/Admin/TurSil/" + id);
+            }
+        })
+    }
+
+
+</script>

@@ -86,26 +86,75 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public IActionResult TurEkle()
+    public IActionResult TurForm(int? id)
     {
-        return View();
+        if (id != null)
+        {
+            TurlerVm duzenlenecekTur = (from x in db.Turlers
+                                        where x.Id == id
+                                        select new TurlerVm
+                                        {
+                                            Id = x.Id,
+                                            Sira = x.Sira,
+                                            TurAdi = x.TurAdi
+                                        }).FirstOrDefault();
+
+            ViewBag.PageTitle = "Tür Düzenle";
+            return View(duzenlenecekTur);
+        }
+        else if (id == null)
+        {
+            ViewBag.PageTitle = "Tür Ekle";
+            return View();
+        }
+        else
+        {
+            return View();
+        }
+
     }
 
     [HttpPost]
-    public async Task<IActionResult> TurEkle(TurlerVm gelenData)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> TurForm(TurlerVm gelenData)
     {
         if (!ModelState.IsValid)
         {
             return View(gelenData);
         }
-        Turler yeniTur = new Turler
-        {
-            TurAdi = gelenData.TurAdi,
-            Sira = gelenData.Sira
-        };
 
-        await db.AddAsync(yeniTur);
+        if (gelenData.Id != 0)
+        {
+            Turler duzenelenecekTur = db.Turlers.Find(gelenData.Id);
+            if (duzenelenecekTur != null)
+            {
+                duzenelenecekTur.Sira = gelenData.Sira;
+                duzenelenecekTur.TurAdi = gelenData.TurAdi;
+            }
+        }
+        else if (gelenData.Id == 0)
+        {
+            Turler yeniTur = new Turler
+            {
+                TurAdi = gelenData.TurAdi,
+                Sira = gelenData.Sira
+            };
+            await db.AddAsync(yeniTur);
+        }
         await db.SaveChangesAsync();
+
+        return Redirect("/Admin/Turler");
+    }
+
+
+    public async Task<IActionResult> TurSil(int id)
+    {
+        Turler silinecekTur = db.Turlers.Find(id);
+        if (silinecekTur != null)
+        {
+            db.Turlers.Remove(silinecekTur);
+            await db.SaveChangesAsync();
+        }
 
         return Redirect("/Admin/Turler");
     }
